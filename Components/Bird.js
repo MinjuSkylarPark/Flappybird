@@ -1,5 +1,6 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View,Image } from 'react-native'
+import splash from '../assets/splash.png';
 
 
 //App.js에서 설정한 새의 위치/추락 변수처리를 한것을 props를 구조분해
@@ -7,8 +8,8 @@ import { View } from 'react-native'
 const Bird = ({BirdBottom,BirdLeft}) => {
     //새의 위치를 아래 div내 왼쪽으로 위치시키기 싫으므로
     //변수로 새의 위치를 중앙으로 재조정 
-    const birdWidth = 50
-    const birdHeight = 50
+    const birdWidth = 60
+    const birdHeight = 60
 
     return (
     <View style={{
@@ -17,10 +18,14 @@ const Bird = ({BirdBottom,BirdLeft}) => {
         //상단에 정해준 새 변수 할당
         width:birdWidth,
         height:birdHeight,
-        bottom: BirdBottom - (birdHeight /2),
+        //새의 위치를 아래 div내 왼쪽으로 위치시키기 싫으므로
+        //변수로 새의 위치를 중앙으로 재조정 
         left: BirdLeft - (birdWidth / 2),
-       
-    }}/>
+        bottom: BirdBottom - (birdHeight /2)     
+    }}>
+        <Image style={{resizeMode:"center",
+    }}source={splash}/>
+    </View>
   )
 }
 

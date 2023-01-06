@@ -14,14 +14,17 @@ export default function App() {
   const [BirdBottom,setBirdBottom] = useState(screenHeight / 2)
   //??장애물이 이동할때마다 위치설정?? 이따 설명 다시 들어보고 적겠음
   const [ObstaclesLeft,setObstaclesLeft]= useState(screenWidth); 
+  const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2); 
   const obstacleWidth = 60
   const obstacleHeight = 300
-  const gap = 90
+  //플래피버드가 지나가는 장애물 사이의 공간
+  const gap = 200
   //중력때문에 새가 아래로 가는거라 변수명=중력
   const gravity = 3
   //상단에 이렇게 정의해주면 필요한곳은 어디든 다 갖다 쓸 수 있음
   let gameTimerId
   let obstaclesLeftTimerId
+  let ObstaclesLeftTimerIdTwo
 
 
   //새가 아래로 떨어지는 부분
@@ -37,14 +40,16 @@ export default function App() {
         clearInterval(gameTimerId)
       }
     }
+    //useEffect사용시에는,[]<-내부에 값을 꼭 돌려준다 
   },[BirdBottom])
   //새떨어질때 위치보려고 출력하는거
+
   console.log(BirdBottom)
 
   //최초 장애물 설정
   useEffect(()=>{
     //장애물은 일정시간마다 왼쪽으로 이동한다
-    //만약 장애물이 장애물의 위드값보다 크다면
+    //ObstaclesLeft > - obstacleWidth => 장애물 사라지게하기
     if(ObstaclesLeft > - obstacleWidth){
       obstaclesLeftTimerId =  setInterval(() => {
         // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
@@ -58,8 +63,27 @@ export default function App() {
       //setInterval 설정무효화
       clearInterval(obstaclesLeftTimerId) 
     } 
-
   },[ObstaclesLeft])
+
+  //두번째 장애물 설정
+  useEffect(()=>{
+    //장애물은 일정시간마다 왼쪽으로 이동한다
+    //ObstaclesLeft > - obstacleWidth => 장애물 사라지게하기
+    if(ObstaclesLeftTwo > - obstacleWidth){
+      ObstaclesLeftTimerIdTwo =  setInterval(() => {
+        // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
+        setObstaclesLeftTwo(ObstaclesLeftTwo => ObstaclesLeftTwo-5)
+      }, 30);
+    }else{
+      setObstaclesLeftTwo(screenWidth)
+    }
+    //여기서 return은 if다음 else역할을 함
+    return()=>{
+      //setInterval 설정무효화
+      clearInterval(ObstaclesLeftTimerIdTwo) 
+    } 
+  },[ObstaclesLeftTwo])
+
 
   return (
     
@@ -68,10 +92,18 @@ export default function App() {
         BirdBottom={BirdBottom}
         BirdLeft={BirdLeft}/>
       <Obstacles 
+        color={'blue'}
         obstacleWidth={obstacleWidth}
         obstacleHeight={obstacleHeight}
         gap={gap}
         ObstaclesLeft={ObstaclesLeft}/>
+      <Obstacles 
+        color={'green'}
+        obstacleWidth={obstacleWidth}
+        obstacleHeight={obstacleHeight}
+        gap={gap}
+        ObstaclesLeft={ObstaclesLeftTwo}/>
+
     </View>
 
   
