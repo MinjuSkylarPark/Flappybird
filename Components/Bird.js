@@ -7,8 +7,8 @@ import { View } from 'react-native'
 const Bird = ({BirdBottom,BirdLeft}) => {
     //새의 위치를 아래 div내 왼쪽으로 위치시키기 싫으므로
     //변수로 새의 위치를 중앙으로 재조정 
-    const birdWidth = 60
-    const birdHeight = 60
+    const birdWidth = 50
+    const birdHeight = 50
 
     return (
     <View style={{

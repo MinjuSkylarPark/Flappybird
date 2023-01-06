@@ -44,17 +44,20 @@ export default function App() {
   //최초 장애물 설정
   useEffect(()=>{
     //장애물은 일정시간마다 왼쪽으로 이동한다
-    if(ObstaclesLeft > - obstacleWidth ){
+    //만약 장애물이 장애물의 위드값보다 크다면
+    if(ObstaclesLeft > - obstacleWidth){
       obstaclesLeftTimerId =  setInterval(() => {
         // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
         setObstaclesLeft(ObstaclesLeft => ObstaclesLeft-5)
       }, 30);
+    }else{
+      setObstaclesLeft(screenWidth)
     }
     //여기서 return은 if다음 else역할을 함
     return()=>{
       //setInterval 설정무효화
       clearInterval(obstaclesLeftTimerId) 
-    }
+    } 
 
   },[ObstaclesLeft])
 
