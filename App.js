@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
 import React , { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+//Touchablewithoutfeedback -> 화면전체를 감싸고 화면을 터지하자마자 점프하도록하는 속성
+import { Dimensions, StyleSheet,View, TouchableWithoutFeedback } from 'react-native';
 import Bird from './Components/Bird';
 import Obstacles from './Components/Obstacles';
 
@@ -14,7 +14,10 @@ export default function App() {
   const [BirdBottom,setBirdBottom] = useState(screenHeight / 2)
   //??장애물이 이동할때마다 위치설정?? 이따 설명 다시 들어보고 적겠음
   const [ObstaclesLeft,setObstaclesLeft]= useState(screenWidth); 
-  const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2); 
+  const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2 ); 
+  //랜덤함수부여
+  const [ObstaclesNegHeight, setoOstaclesNegheight] = useState(0)
+  const [ObstaclesNegHeightTwo, setoOstaclesNegheightTwo] = useState(0)
   const obstacleWidth = 60
   const obstacleHeight = 300
   //플래피버드가 지나가는 장애물 사이의 공간
@@ -25,6 +28,7 @@ export default function App() {
   let gameTimerId
   let obstaclesLeftTimerId
   let ObstaclesLeftTimerIdTwo
+  let randomBottom
 
 
   //새가 아래로 떨어지는 부분
@@ -57,6 +61,8 @@ export default function App() {
       }, 30);
     }else{
       setObstaclesLeft(screenWidth)
+      setoOstaclesNegheight(-Math.random() * 100)
+      
     }
     //여기서 return은 if다음 else역할을 함
     return()=>{
@@ -72,10 +78,12 @@ export default function App() {
     if(ObstaclesLeftTwo > - obstacleWidth){
       ObstaclesLeftTimerIdTwo =  setInterval(() => {
         // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
-        setObstaclesLeftTwo(ObstaclesLeftTwo => ObstaclesLeftTwo-5)
+        setObstaclesLeftTwo(ObstaclesLeftTwo => ObstaclesLeftTwo - 5)
       }, 30);
     }else{
       setObstaclesLeftTwo(screenWidth)
+      setoOstaclesNegheightTwo(-Math.random()*100)
+
     }
     //여기서 return은 if다음 else역할을 함
     return()=>{
@@ -84,27 +92,55 @@ export default function App() {
     } 
   },[ObstaclesLeftTwo])
 
+// 새가 기둥과 충돌했을 때
+useEffect(()=>{
+  if (
+  ((BirdBottom<(ObstaclesNegHeight + obstacleHeight ) ) || 
+   BirdBottom>(ObstaclesNegHeight + obstacleHeight + gap )) && 
+  (ObstaclesLeft> screenWidth && ObstaclesLeft < screenWidth/2 + 30)
+  || 
+  (BirdBottom<(ObstaclesNegHeightTwo + obstacleHeight ) ) || 
+  BirdBottom>(ObstaclesNegHeightTwo + obstacleHeight + gap ) && 
+  (ObstaclesLeftTwo> screenWidth && ObstaclesLeftTwo < screenWidth/2 + 30)
+ 
+  )  
+  {
+  console.log("game over")
+    gameOver()
+  }
+
+})
+
+  const gameOver = () =>{
+    clearInterval(gameTimerId)
+    clearInterval(obstaclesLeftTimerId)
+    clearInterval(ObstaclesLeftTimerIdTwo)
+  }
 
   return (
-    
-    <View style={styles.container}>
-      <Bird 
-        BirdBottom={BirdBottom}
-        BirdLeft={BirdLeft}/>
-      <Obstacles 
-        color={'blue'}
-        obstacleWidth={obstacleWidth}
-        obstacleHeight={obstacleHeight}
-        gap={gap}
-        ObstaclesLeft={ObstaclesLeft}/>
-      <Obstacles 
-        color={'green'}
-        obstacleWidth={obstacleWidth}
-        obstacleHeight={obstacleHeight}
-        gap={gap}
-        ObstaclesLeft={ObstaclesLeftTwo}/>
-
-    </View>
+    //View밖의 화면 전체를 감싸고 스크린을 터치함과 동시에
+    //새 점프시키기 
+    <TouchableWithoutFeedback>
+      <View style={styles.container}>
+        <Bird 
+          BirdBottom={BirdBottom}
+          BirdLeft={BirdLeft}/>
+        <Obstacles 
+          color={'blue'}
+          obstacleWidth={obstacleWidth}
+          obstacleHeight={obstacleHeight}
+          randomBottom={ObstaclesNegHeight}
+          gap={gap}
+          ObstaclesLeft={ObstaclesLeft}/>
+        <Obstacles 
+          color={'green'}
+          obstacleWidth={obstacleWidth}
+          obstacleHeight={obstacleHeight}
+          randomBottom={ObstaclesNegHeightTwo}
+          gap={gap}
+          ObstaclesLeft={ObstaclesLeftTwo}/>
+      </View>
+    </TouchableWithoutFeedback>
 
   
   );
