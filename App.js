@@ -29,6 +29,9 @@ export default function App() {
   let obstaclesLeftTimerId
   let ObstaclesLeftTimerIdTwo
   let randomBottom
+  // let isgameOver = false
+  const [isgameOver,setgameOver] = useState(false)
+  
 
 
   //새가 아래로 떨어지는 부분
@@ -47,8 +50,15 @@ export default function App() {
     //useEffect사용시에는,[]<-내부에 값을 꼭 돌려준다 
   },[BirdBottom])
   //새떨어질때 위치보려고 출력하는거
-
   console.log(BirdBottom)
+
+  //하단의 setgameOver과 이어짐
+  const jump = ()=>{
+    if(!isgameOver && (BirdBottom < screenHeight)){
+      setBirdBottom(BirdBottom => BirdBottom+ 50)
+      console.log('jump')
+    }
+  }
 
   //최초 장애물 설정
   useEffect(()=>{
@@ -108,19 +118,20 @@ useEffect(()=>{
   console.log("game over")
     gameOver()
   }
-
 })
 
   const gameOver = () =>{
     clearInterval(gameTimerId)
     clearInterval(obstaclesLeftTimerId)
     clearInterval(ObstaclesLeftTimerIdTwo)
+     //최상단 let isgameOver = false 다음과 이어짐
+    setgameOver(true)
   }
 
   return (
     //View밖의 화면 전체를 감싸고 스크린을 터치함과 동시에
     //새 점프시키기 
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={jump}>
       <View style={styles.container}>
         <Bird 
           BirdBottom={BirdBottom}
