@@ -27,8 +27,8 @@ const Obstacles= ({
         width:obstacleWidth,
         height: obstacleHeight,
         left:ObstaclesLeft,
-        // bottom :0 + obstacleHeight + gap,
-        bottom : randomBottom + obstacleHeight + gap,
+        bottom :0 + obstacleHeight + gap,
+       // bottom : randomBottom + obstacleHeight + gap,
     }}
      >
         <ImageBackground source={column1} resizeMode="cover" style={styles.columns}/>

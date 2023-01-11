@@ -11,7 +11,9 @@ export default function App() {
   const screenWidth = Dimensions.get("screen").width
   const screenHeight = Dimensions.get("screen").height
   const BirdLeft = screenWidth / 2
-  const [Score,setScore] = useState()
+  //상태기본값을 파라미터로 넣어줌 
+  //장애물일경우에 0은 같은 크기로 출력되는 것 게임스코어의 경우에는 점수판이 0부터 시작하는 것 
+  const [Score,setScore] = useState(0)
   const [BirdBottom,setBirdBottom] = useState(screenHeight /2)
   const [ObstaclesLeft,setObstaclesLeft]= useState(screenWidth); 
   const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2 + 30); 
@@ -74,7 +76,7 @@ export default function App() {
       //랜덤한길이를 출력하는 map함수설정
       //0-100까지 사이의 수가 무작위로 기둥의높이를 설정함
       setoOstaclesNegheight(-Math.random() * 100)
-      // setScore(Score => Score + 1)
+      setScore(Score => Score + 1 )
     }
   },[ObstaclesLeft])
 
@@ -94,6 +96,7 @@ export default function App() {
     }else{
       setObstaclesLeftTwo(screenWidth)
       setoOstaclesNegheightTwo( - Math.random()*100)
+      setScore(Score => Score + 1 )
     }
     //여기서 return은 if다음 else역할을 함
   },[ObstaclesLeftTwo])
@@ -168,8 +171,9 @@ const styles = StyleSheet.create({
     justifyContent:'center',
   },
   score:{
-    fontSize:100,
-    color:'pink'
+    fontSize:10,
+    color:'red',
+    marginLeft:90,
   },
   Gameover:{
     fontSize:40,
