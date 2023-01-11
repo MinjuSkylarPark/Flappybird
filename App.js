@@ -7,20 +7,19 @@ import Obstacles from './Components/Obstacles';
 
 export default function App() {
   
+//디바이스기종에 상관없이 화면크기를 설정한다. 게임화면이 똑같이 출력되도록
   const screenWidth = Dimensions.get("screen").width
   const screenHeight = Dimensions.get("screen").height
-  //중앙에있는 새를 장애물충돌시의 상황에대비해 왼쪽으로 둔다.
-  //새는 위아래로만 이동하며 좌우로 움직이지않는다. 
   const BirdLeft = screenWidth / 2
   const [Score,setScore] = useState()
-  const [BirdBottom,setBirdBottom] = useState(screenHeight / 2)
-  //??장애물이 이동할때마다 위치설정?? 이따 설명 다시 들어보고 적겠음
+  const [BirdBottom,setBirdBottom] = useState(screenHeight /2)
   const [ObstaclesLeft,setObstaclesLeft]= useState(screenWidth); 
-  const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2 ); 
+  const [ObstaclesLeftTwo,setObstaclesLeftTwo]= useState(screenWidth + screenWidth / 2 + 30); 
   //랜덤함수부여
+  //현재설정되어있는 칼럼의 길이 랜덤설정 useState(0)로 설정해서 시작은 항상 같은길이로 출력.
   const [ObstaclesNegHeight, setoOstaclesNegheight] = useState(0)
+  //랜덤한길이로 시작하는 칼럼 2개 생성 - 시작부터 다르게 항
   const [ObstaclesNegHeightTwo, setoOstaclesNegheightTwo] = useState(0)
-  const [isgameOver,setgameOver] = useState(false)
   const obstacleWidth = 60
   const obstacleHeight = 300
   //플래피버드가 지나가는 장애물 사이의 공간
@@ -33,15 +32,15 @@ export default function App() {
   let gameTimerId
   let obstaclesLeftTimerId
   let ObstaclesLeftTimerIdTwo
+  const [isgameOver,setgameOver] = useState(false)
   let randomBottom
 
 
   //새가 아래로 떨어지는 부분
   useEffect(()=>{
     if(BirdBottom > 0 ){
-      //setInterval:일정시간 마다 함수가 실행되도록 처리하
+      //setInterval:일정시간 마다 함수가 자동으로 실행되도록 처리
       gameTimerId =  setInterval(()=>{
-       //새는 일정시간-0.3초-마다 밑바닥으로 향하게된다
         setBirdBottom(BirdBottom => BirdBottom - gravity )
       },30)
       return ()=>{
@@ -51,7 +50,6 @@ export default function App() {
     }
     //useEffect사용시에는,[]<-내부에 값을 꼭 돌려준다 
   },[BirdBottom])
-  //새떨어질때 위치보려고 출력하는거
   console.log(BirdBottom)
 
   //하단의 setgameOver과 이어짐
@@ -64,24 +62,20 @@ export default function App() {
   }
   //최초 장애물 설정
   useEffect(()=>{
-    //장애물은 일정시간마다 왼쪽으로 이동한다
-    //ObstaclesLeft > - obstacleWidth => 장애물 사라지게하기
     if(ObstaclesLeft > - obstacleWidth){
       obstaclesLeftTimerId =  setInterval(() => {
-        // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
         setObstaclesLeft(ObstaclesLeft => ObstaclesLeft-5)
-      }, 30);
+      }, 30)
+      return()=>{
+        clearInterval(obstaclesLeftTimerId) 
+      } 
     }else{
       setObstaclesLeft(screenWidth)
+      //랜덤한길이를 출력하는 map함수설정
+      //0-100까지 사이의 수가 무작위로 기둥의높이를 설정함
       setoOstaclesNegheight(-Math.random() * 100)
-      setScore(Score => Score + 1)
-      
+      // setScore(Score => Score + 1)
     }
-    //여기서 return은 if다음 else역할을 함
-    return()=>{
-      //setInterval 설정무효화
-      clearInterval(obstaclesLeftTimerId) 
-    } 
   },[ObstaclesLeft])
 
   //두번째 장애물 설정
@@ -93,46 +87,40 @@ export default function App() {
         // 매 0.3초마다 장애물이 왼쪽 5픽셀씩 움직이게 설정
         setObstaclesLeftTwo(ObstaclesLeftTwo => ObstaclesLeftTwo - 5)
       }, 30);
+      return()=>{
+        //setInterval 설정무효화
+        clearInterval(ObstaclesLeftTimerIdTwo) 
+      } 
     }else{
       setObstaclesLeftTwo(screenWidth)
-      setoOstaclesNegheightTwo(-Math.random()*100)
-
+      setoOstaclesNegheightTwo( - Math.random()*100)
     }
     //여기서 return은 if다음 else역할을 함
-    return()=>{
-      //setInterval 설정무효화
-      clearInterval(ObstaclesLeftTimerIdTwo) 
-    } 
   },[ObstaclesLeftTwo])
 
-// 새가 기둥과 충돌했을 때
-useEffect(()=>{
-  if (
-  ((BirdBottom<(ObstaclesNegHeight + obstacleHeight + 30 ) ) || 
-   BirdBottom>(ObstaclesNegHeight + obstacleHeight + gap -30 )) && 
-  (ObstaclesLeft> screenWidth/2 && ObstaclesLeft < screenWidth/2 + 30 )
-  || 
-  (BirdBottom<(ObstaclesNegHeightTwo + obstacleHeight + 30 ) ) || 
-  BirdBottom>(ObstaclesNegHeightTwo + obstacleHeight + gap - 30 ) && 
-  (ObstaclesLeftTwo> screenWidth/2 - 30 && ObstaclesLeftTwo < screenWidth/2 + 30 ))  
-  {
-  console.log("game over")
-    gameOver()
-  }
-})
-  //Game Over 게임 종료시키기 
+   useEffect(()=>{
+      if (
+      ((BirdBottom<(ObstaclesNegHeight + obstacleHeight  ) ) || 
+      BirdBottom>(ObstaclesNegHeight + obstacleHeight + gap )) && 
+      (ObstaclesLeft> screenWidth/2 && ObstaclesLeft < screenWidth/2 + 30 )
+      || 
+      (BirdBottom<(ObstaclesNegHeightTwo + obstacleHeight ) ) || 
+      BirdBottom>(ObstaclesNegHeightTwo + obstacleHeight + gap ) && 
+      (ObstaclesLeftTwo> screenWidth/2 && ObstaclesLeftTwo < screenWidth/2 + 30 )
+      )  
+      {
+      console.log("game over")
+        gameOver()
+      }
+    })
   const gameOver = () =>{
-    // 지속적으로 진행되는 모든 상태들을 초기화
     clearInterval(gameTimerId)
     clearInterval(obstaclesLeftTimerId)
     clearInterval(ObstaclesLeftTimerIdTwo)
-    //
     setgameOver(true)
   }
 
   return (
-    //View밖의 화면 전체를 감싸고 스크린을 터치함과 동시에
-    //새 점프시키기 
 
     <TouchableWithoutFeedback onPress={jump} >
 
@@ -140,9 +128,8 @@ useEffect(()=>{
       
         <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         
-        {/* 게임오버와 동시에 화면에 점수 출력 */}
-       {/* 숫자출력은 장애물의 통과갯수만큼 카운팅되어 출력된다  */}
       {isgameOver && <Text style={styles.score}>{Score}</Text>}
+      {isgameOver && <Text style={styles.Gameover}>Game over</Text>}
         <Bird 
           BirdBottom={BirdBottom}
           BirdLeft={BirdLeft}/> 
@@ -175,8 +162,6 @@ useEffect(()=>{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   image:{
     flex:1,
@@ -185,5 +170,14 @@ const styles = StyleSheet.create({
   score:{
     fontSize:100,
     color:'pink'
+  },
+  Gameover:{
+    fontSize:40,
+    color:'black',
+    marginLeft:90,
+    marginBottom:100,
+    alignContent:'center',
+    justifyContent:'center',
+  
   }
 });

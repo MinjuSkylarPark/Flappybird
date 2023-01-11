@@ -13,7 +13,7 @@ const Obstacles= ({
     obstacleHeight,
     gap,
     color,
-randomBottom}) => {
+    randomBottom}) => {
   
   //장애물 사이즈 설정
     return (
